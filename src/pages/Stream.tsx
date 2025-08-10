@@ -3,6 +3,7 @@ import { MEDIUMS, works as seedWorks, sorters, featured, byId } from "@/data/see
 import WorkCard from "@/components/cards/WorkCard";
 import { FilterBar, SortKey } from "@/components/filters/FilterBar";
 import Seo from "@/seo/Seo";
+import { useSearchParams } from "react-router-dom";
 
 const CHUNK = 6;
 
@@ -25,6 +26,12 @@ const Stream = () => {
     }
     return list;
   }, [keyword, medium, sort]);
+
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const m = searchParams.get('medium');
+    if (m && MEDIUMS.includes(m as any)) setMedium(m);
+  }, [searchParams]);
 
   useEffect(() => {
     setVisible(CHUNK);

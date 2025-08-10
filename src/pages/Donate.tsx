@@ -1,18 +1,17 @@
 import { useMemo, useState } from "react";
 import { artists as seedArtists } from "@/data/seed";
 import ArtistCard from "@/components/cards/ArtistCard";
-import DonateModal from "@/components/overlays/DonateModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Seo from "@/seo/Seo";
+import { useNavigate } from "react-router-dom";
 
 const Donate = () => {
   const [q, setQ] = useState("");
   const [medium, setMedium] = useState("");
   const [goal, setGoal] = useState("");
   const [loc, setLoc] = useState("");
-  const [open, setOpen] = useState(false);
-  const [artistName, setArtistName] = useState("");
+  const navigate = useNavigate();
 
   const list = useMemo(() => {
     let a = seedArtists.slice();
@@ -30,28 +29,28 @@ const Donate = () => {
       <section className="container space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <Input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Search artists" />
-          <Select value={medium} onValueChange={setMedium}>
+          <Select value={medium} onValueChange={(v)=>setMedium(v === 'all' ? '' : v)}>
             <SelectTrigger><SelectValue placeholder="Medium" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All</SelectItem>
+              <SelectItem value="all">All</SelectItem>
               {Array.from(new Set(seedArtists.flatMap(a=>a.mediums))).map((m)=> (
                 <SelectItem key={m} value={m}>{m}</SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Select value={loc} onValueChange={setLoc}>
+          <Select value={loc} onValueChange={(v)=>setLoc(v === 'anywhere' ? '' : v)}>
             <SelectTrigger><SelectValue placeholder="Location" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Anywhere</SelectItem>
+              <SelectItem value="anywhere">Anywhere</SelectItem>
               {Array.from(new Set(seedArtists.map(a=>a.location).filter(Boolean) as string[])).map((l)=> (
                 <SelectItem key={l} value={l}>{l}</SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Select value={goal} onValueChange={setGoal}>
+          <Select value={goal} onValueChange={(v)=>setGoal(v === 'any' ? '' : v)}>
             <SelectTrigger><SelectValue placeholder="Goal status" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any</SelectItem>
+              <SelectItem value="any">Any</SelectItem>
               <SelectItem value="has">Has Goal</SelectItem>
               <SelectItem value="none">No Goal</SelectItem>
             </SelectContent>
@@ -59,7 +58,7 @@ const Donate = () => {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {list.map((a)=> (
-            <ArtistCard key={a.id} artist={a} onSupport={(artist)=>{ setArtistName(artist.name); setOpen(true); }} />
+            <ArtistCard key={a.id} artist={a} onSupport={(artist)=>{ navigate(`/artist/${artist.slug}?tab=donate`); }} />
           ))}
         </div>
       </section>
@@ -69,7 +68,6 @@ const Donate = () => {
           <p className="text-muted-foreground">Your support helps artists create, perform, and publish their next work.</p>
         </div>
       </section>
-      <DonateModal open={open} onOpenChange={setOpen} artistName={artistName} />
     </div>
   );
 };

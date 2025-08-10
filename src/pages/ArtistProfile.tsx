@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { byId, works as seedWorks, updates as seedUpdates } from "@/data/seed";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,9 @@ const ArtistProfile = () => {
   const works = useMemo(() => seedWorks.filter(w => w.artistId === artist?.id), [artist?.id]);
   const updates = useMemo(() => seedUpdates.filter(u => u.artistId === artist?.id), [artist?.id]);
   const ogImage = works.find(w => w.mediaUrl)?.mediaUrl;
+
+  const [searchParams] = useSearchParams();
+  const initialTab = (searchParams.get('tab') ?? 'portfolio') as 'portfolio' | 'updates' | 'about' | 'donate';
 
   if (!artist) return <div className="container">Artist not found.</div>;
 
@@ -44,7 +47,7 @@ const ArtistProfile = () => {
       </header>
 
       <section className="container">
-        <Tabs defaultValue="portfolio">
+        <Tabs defaultValue={initialTab}>
           <TabsList>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="updates">Updates</TabsTrigger>

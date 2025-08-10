@@ -27,10 +27,10 @@ export const FilterBar = ({
           <Input value={keyword} onChange={(e)=>onKeyword(e.target.value)} placeholder="Search works..." />
         </div>
         <div className="flex gap-3">
-          <Select value={medium} onValueChange={onMedium}>
+          <Select value={medium} onValueChange={(v)=>onMedium(v === 'all' ? '' : v)}>
             <SelectTrigger className="w-full"><SelectValue placeholder="Medium" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All mediums</SelectItem>
+              <SelectItem value="all">All mediums</SelectItem>
               {mediums.map((m) => (
                 <SelectItem key={m} value={m}>{m}</SelectItem>
               ))}
